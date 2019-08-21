@@ -7,17 +7,15 @@
 
    `bcl2fastq --sample-sheet samplesheet.csv -o Unaligned --barcode-mismatches 0`
    
-2. FastQC v0.11.5 [1] was used to check the quality of the fastq files.
- 
-3. pRESTO v 0.5.3 [2] used for pre-processing.
+   The fastq files were combined from all three sequencing runs.
+   
+3. pRESTO v 0.5.8 [2] used for pre-processing.
 
-3. Assemble: Reads assembled using AssemblePairs.py
+4. Assemble: Reads assembled using AssemblePairs.py
    
    `AssemblePairs.py align -1 <Read1.fastq> -2 <Read2.fastq> --coord illumina --nproc 2 --rc tail --outname <output> --log <log file>`
    
    GNU parallel [3] was used to process multiple samples simultaneously.
-  
-4. After assembly, the files from all three sequencing runs were combined.
   
 5. The run_extraction2.pl and extract_inline2.pl scripts were used to demultiplex samples.
 
@@ -62,16 +60,16 @@
 15. Make database from IgBLAST using MakeDb.py from ChangeO 0.3.3 [6]
 
     ```
-    MakeDb.py igblast -i <blastout> -s <fasta> -r IGH[VDJ].fa --regions --scores --outname <output>
-    MakeDb.py igblast -i <blastout> -s <fasta> -r IGK[VJ].fa --regions --scores --outname <output>
-    MakeDb.py igblast -i <blastout> -s <fasta> -r IGL[VJ].fa --regions --scores --outname <output>
+    MakeDb.py igblast -i <blastout> -s <fasta> -r IGH[VDJ].fa --cdr3 --regions --scores --outname <output>
+    MakeDb.py igblast -i <blastout> -s <fasta> -r IGK[VJ].fa --cdr3 --regions --scores --outname <output>
+    MakeDb.py igblast -i <blastout> -s <fasta> -r IGL[VJ].fa --cdr3 --regions --scores --outname <output>
     ```
 
 16. Get Functional sequences
 
     `ParseDb.py split -d <input>  -f FUNCTIONAL --outname <output>`
 
-17. Clonal assignment using get_clonotype.pl. Sequences are assigned to the same clonal family if they have: 
+17. Clonal assignment using get_clonotype_v2.pl. Sequences are assigned to the same clonal family if they have: 
       (i) same V gene, 
      (ii) same J gene,
     (iii) same CDR3 length
@@ -92,13 +90,13 @@
     CreateGermlines.py -d <input> -g dmask -r IGL[VJ].fa --outdir Germlines
     ```
 
-21. Mutations determined by observedMutations function from alakazam 0.2.10 and shazam 0.1.9 packages.
+21. Mutations determined by observedMutations function from alakazam 0.2.11 and shazam 0.1.11 packages.
 
     `observedMutations(db_obs, sequenceColumn="SEQUENCE_IMGT",
                               germlineColumn="GERMLINE_IMGT_D_MASK",
-                              regionDefinition=NULL,
-                              frequency=TRUE, combine = TRUE`                          `
-
+                              regionDefinition=IMGT_V,
+                              frequency=TRUE, combine = TRUE)`                          
+							  
 References:
 1. Andrews S: FastQC: a quality control tool for high throughput sequence data. 2010.
 2. Vander Heiden JA, Yaari G, Uduman M, Stern JN, O'Connor KC, Hafler DA, Vigneault F, Kleinstein SH: pRESTO: a toolkit for processing high-throughput sequencing raw reads of lymphocyte receptor repertoires. Bioinformatics 2014, 30:1930-1932.
