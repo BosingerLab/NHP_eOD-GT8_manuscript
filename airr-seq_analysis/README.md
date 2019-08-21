@@ -57,7 +57,7 @@
     -outfmt '7 std qseq sseq btop' -out IgBLAST/<blastout> -clonotype_out IgBLAST/clonotype/<clontype output>
     ```
 
-15. Make database from IgBLAST using MakeDb.py from ChangeO 0.3.3 [6]
+15. Make database from IgBLAST using MakeDb.py from ChangeO 0.4.1 [6]
 
     ```
     MakeDb.py igblast -i <blastout> -s <fasta> -r IGH[VDJ].fa --cdr3 --regions --scores --outname <output>
